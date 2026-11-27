@@ -79,6 +79,42 @@ a{color:inherit}
 @media (max-width:1100px){.kpis{grid-template-columns:repeat(2,1fr)} .posts{grid-template-columns:repeat(2,1fr)} .cols{grid-template-columns:1fr}}
 @media (max-width:780px){.wrap{padding:18px} .hero{padding:26px} .branchgrid{grid-template-columns:1fr} .posts{grid-template-columns:1fr}}
 @media (max-width:560px){.kpis{grid-template-columns:1fr} .barrow{grid-template-columns:52px 1fr 92px;gap:8px} .section h2{font-size:22px} .panel,.summary{padding:18px}}
+[hidden]{display:none!important}
+.global-switch button:focus-visible,.comparison-nav a:focus-visible,.comparison-table-scroll:focus-visible{outline:3px solid #375c83;outline-offset:3px}
+.hero .global-switch button:focus-visible{outline-color:#fff}
+.comparison-nav{display:flex;flex-wrap:wrap;gap:10px;margin:22px 0}
+.comparison-nav a{display:inline-block;padding:7px 15px;border:1px solid #d0dbe6;background:#fff;color:#28496c;border-radius:10px;font-weight:700;text-decoration:none}
+.comparison-nav a:hover{background:#eaf0f6}
+.comparison-overview{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.comparison-overview>div{background:#fffdf9;border:1px solid var(--line);border-radius:16px;padding:14px 16px}
+.comparison-overview b,.comparison-overview span{display:block}
+.comparison-overview span{color:#553b30;font-weight:700;font-variant-numeric:tabular-nums}
+.comparison-heading{margin:26px 0 10px;color:#254869}
+.comparison-note{font-size:.94rem;color:#665448;margin:12px 0 0}
+.comparison-branch{margin-top:24px;scroll-margin-top:18px}
+.comparison-branch h3{margin:0 0 14px;font-size:1.45rem;color:#254869}
+.comparison-charts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.comparison-chart{margin:0;padding:16px 18px;background:#f9f6f2;border:1px solid var(--line);border-radius:14px}
+.comparison-chart figcaption{font-weight:800;margin:0 0 10px}
+.comparison-key{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:.88rem;margin:12px 0;color:#4f3d33}
+.comparison-key span::before{content:'';display:inline-block;width:11px;height:11px;border-radius:2px;background:#637f9d;margin-inline-end:6px}
+.comparison-key span+span::before{background:#a95539}
+.comparison-bar{display:grid;grid-template-columns:3em minmax(0,1fr) 6em;align-items:center;gap:8px;margin:7px 0;font-size:.88rem}
+.comparison-bar strong{text-align:right;font-variant-numeric:tabular-nums}
+.comparison-bar .track{height:10px;background:#ebe3db}
+.comparison-bar .fill{background:#637f9d}
+.comparison-bar.current .fill{background:#a95539}
+.comparison-table-scroll{overflow-x:auto;margin-top:12px}
+.comparison-table{width:100%;min-width:635px;border-collapse:collapse;font-size:.93rem;text-align:right;font-variant-numeric:tabular-nums}
+.comparison-table th,.comparison-table td{padding:9px 12px;border-bottom:1px solid #e9e0d8;white-space:nowrap}
+.comparison-table thead{background:#254869;color:white}
+.comparison-table thead th:first-child,.comparison-table tbody th{text-align:left}
+.comparison-table tbody th{font-weight:500}
+.comparison-table tbody tr:nth-child(even){background:#fbf7f2}
+.comparison-table tbody .comparison-total{background:#eaf0f6;color:#243e5a;font-weight:800}
+.comparison-table .comparison-total th{font-weight:800}
+@media(max-width:780px){.comparison-overview{grid-template-columns:repeat(2,minmax(0,1fr))}.comparison-charts{grid-template-columns:1fr}}
+@media(max-width:380px){.comparison-overview>div{padding:10px}.comparison-bar{gap:5px;grid-template-columns:2.8em minmax(0,1fr) 5em}}
 </style>
 </head>
 <body>
@@ -89,16 +125,19 @@ a{color:inherit}
         <div class="kicker">EC CAMPAIGN REPORT 2026</div>
         <h1>東寵美容／新舊客活動成效報告</h1>
         <p id="heroSubtitle">統計截止日：2026/11/25</p>
+        <p id="comparisonSubtitle" hidden>比較期間 10/1–11/25</p>
       </div>
       <span class="pill" id="heroPill">11 月成效總覽</span>
     </div>
-    <div class="global-switch" role="group" aria-label="月份切換">
+    <div class="global-switch" role="group" aria-label="報告頁面切換">
       <button id="btn-9月" onclick="setMonth('9月')">9 月</button>
       <button id="btn-10月" onclick="setMonth('10月')">10 月</button>
       <button id="btn-11月" onclick="setMonth('11月')" class="active">11 月</button>
+      <button type="button" id="btnCompare" onclick="showComparison()" aria-controls="comparisonReport" aria-pressed="false">同期比較 10–11 月</button>
     </div>
   </header>
 
+  <div id="monthlyReport">
   <section class="kpis">
     <div class="kpi"><div class="label">活動參與數</div><div class="num" id="kpiCount">-</div><div class="sub" id="kpiCountSub"></div></div>
     <div class="kpi accent"><div class="label">活動金額</div><div class="num" id="kpiAmount">-</div><div class="sub">活動項目金額合計</div></div>
@@ -155,6 +194,20 @@ a{color:inherit}
   </section>
 
   <div class="footer">資料來源：2026【東寵.新.舊客活動】(1).xlsx｜活動數字依「統計」分項加總，並以「明細」核對。11 月統計截止：2026/11/25。</div>
+  </div>
+
+  <section id="comparisonReport" hidden aria-labelledby="comparisonTitle">
+    <h2 class="comparison-heading" id="comparisonTitle">同期比較 10–11 月</h2>
+    <p class="comparison-note">2025 年與 2026 年均統計 10/1–11/25。2025 取同品項病歷，2026 取疫苗優惠登錄。差異＝2026 活動－2025 病歷。</p>
+    <p><strong>四院活動合計 <span id="comparisonOverall"></span></strong></p>
+    <div class="comparison-overview" id="comparisonOverview"></div>
+    <nav class="comparison-nav" id="comparisonNav" aria-label="前往院所比較"></nav>
+    <div class="comparison-key"><span>2025 同期病歷</span><span>2026 同期活動</span></div>
+    <p class="comparison-note">各院圖表依同一尺度繪製。總計為表列方案加總，去年單項及同次就診配對的組合紀錄有重疊。完整的同期施打量與收益須以兩年完整病歷比較。</p>
+    <div id="comparisonBranches"></div>
+    <p class="comparison-note">中華院 11 月採活動頁列報的 12 筆／8,040 元，明細去重後可核對 9 筆／5,950 元。</p>
+  </section>
+
 </main>
 <div class="modal" id="modal" onclick="closeModal()"><button aria-label="關閉">×</button><img id="fullImage" alt="活動海報放大圖" onclick="event.stopPropagation()"></div>
 <script>
@@ -289,7 +342,8 @@ function updateConclusion(){
 
 function setMonth(month){
   currentMonth = month;
-  ['9月','10月','11月'].forEach(m => document.getElementById(`btn-${m}`).classList.toggle('active', m===currentMonth));
+  if (location.hash.startsWith('#compare')) history.pushState(null, '', location.pathname + location.search);
+  syncReportView();
   updateKPIs();
   updateNotice();
   updateCharts();
@@ -297,7 +351,130 @@ function setMonth(month){
   updateConclusion();
 }
 
-setMonth('11月');
+const comparisonPlans = [
+  ['舊客・犬十合一', '舊客-犬十合一'],
+  ['舊客・貓三合一', '舊客-貓三合一'],
+  ['新客・犬十合一＋狂犬病', '新客-B 狗狗疫苗禮'],
+  ['新客・貓三合一＋白血病', '新客-C 貓咪疫苗禮'],
+  ['新舊客・貓四合一升級', '【新舊客升級活動】 貓咪疫苗禮']
+];
+
+const comparisonHistory = [
+  ['ximen', '西門院', [[35,15140],[37,21560],[29,16600],[20,24640]]],
+  ['zhongshan', '中山院', [[10,2700],[24,7700],[1,0],[0,0],[0,0]]],
+  ['zhonghua', '中華院', [[41,22360],[61,35420],[34,26940],[33,38200]]],
+  ['dawan', '大灣院', [[13,9630],[24,11590],[9,7770],[15,15720]]]
+];
+
+function countAndAmount(entries, countKey, amountKey) {
+  return entries.reduce(([count, amount], entry) => [
+    count + entry[countKey], amount + entry[amountKey]
+  ], [0,0]);
+}
+
+function compareBranches() {
+  const activities = items.filter(item => item.month === '10月' || item.month === '11月');
+  return comparisonHistory.map(([id, branch, history]) => {
+    const rows = history.map(([quantity, revenue], index) => {
+      const [label, activityName] = comparisonPlans[index];
+      const [count, amount] = countAndAmount(
+        activities.filter(item => item.branch === branch && item.item === activityName),
+        'count', 'amount'
+      );
+      return {label, quantity, revenue, count, amount, isBundle: index === 2 || index === 3};
+    });
+    return {id, branch, rows, past: countAndAmount(rows, 'quantity', 'revenue'),
+      current: countAndAmount(rows, 'count', 'amount')};
+  });
+}
+
+const comparisonBranches = compareBranches();
+const comparisonSigned = value => value === 0 ? '0' : (value > 0 ? '＋' : '−') + fmt(Math.abs(value));
+const comparisonMoney = value => fmt(value) + ' 元';
+const comparisonPair = ([count, amount], unit = '') => fmt(count) + unit + '／' + comparisonMoney(amount);
+const comparisonDifference = (past, current) =>
+  comparisonSigned(current[0] - past[0]) + '／' + comparisonSigned(current[1] - past[1]) + ' 元';
+
+function comparisonChart(title, past, current, max, format) {
+  const bars = [past, current].map((value, index) => `
+    <div class="comparison-bar ${index === 1 ? 'current' : ''}">
+      <span>${2025 + index}</span>
+      <span class="track"><span class="fill" style="display:block;width:${value / max * 100}%"></span></span>
+      <strong>${format(value)}</strong>
+    </div>`).join('');
+  return `<figure class="comparison-chart" aria-hidden="true"><figcaption>${title}</figcaption>${bars}</figure>`;
+}
+
+function renderComparison() {
+  const maxQuantity = Math.max(1, ...comparisonBranches.flatMap(({past, current}) => [past[0], current[0]]));
+  const maxRevenue = Math.max(1, ...comparisonBranches.flatMap(({past, current}) => [past[1], current[1]]));
+  const total = countAndAmount(comparisonBranches.map(({current}) => current), 0, 1);
+  document.getElementById('comparisonOverall').textContent = comparisonPair(total, ' 筆');
+  document.getElementById('comparisonNav').innerHTML = comparisonBranches.map(({id, branch}) =>
+    `<a href="#compare-${id}">${branch}</a>`).join('');
+  document.getElementById('comparisonOverview').innerHTML = comparisonBranches.map(({branch, current}) =>
+    `<div><b>${branch}</b><span>${comparisonPair(current, ' 筆')}</span></div>`).join('');
+  document.getElementById('comparisonBranches').innerHTML = comparisonBranches.map(({id, branch, rows, past, current}) => {
+    const details = rows.map(row => `<tr><th scope="row">${row.label}</th>
+      <td>${comparisonPair([row.quantity, row.revenue], row.isBundle ? ' 組' : '')}</td>
+      <td>${comparisonPair([row.count, row.amount], ' 筆')}</td>
+      <td>${comparisonDifference([row.quantity, row.revenue], [row.count, row.amount])}</td></tr>`).join('');
+    return `<section class="panel comparison-branch" id="compare-${id}" aria-labelledby="label-${id}">
+      <h3 id="label-${id}">${branch}</h3>
+      <div class="comparison-charts">
+        ${comparisonChart('表列數量／活動筆數', past[0], current[0], maxQuantity, fmt)}
+        ${comparisonChart('表列收益', past[1], current[1], maxRevenue, comparisonMoney)}
+      </div>
+      <div class="comparison-table-scroll" role="region" aria-label="${branch}疫苗比較表" tabindex="0">
+        <table class="comparison-table">
+          <thead><tr><th scope="col">疫苗方案</th><th scope="col">2025 病歷<br>數量／收益</th>
+            <th scope="col">2026 活動<br>筆數／收益</th><th scope="col">差異<br>數值／收益</th></tr></thead>
+          <tbody>${details}<tr class="comparison-total"><th scope="row">${branch}總計</th>
+            <td>${comparisonPair(past)}</td><td>${comparisonPair(current, ' 筆')}</td>
+            <td>${comparisonDifference(past, current)}</td></tr></tbody>
+        </table>
+      </div>
+    </section>`;
+  }).join('');
+}
+
+function syncReportView() {
+  const comparison = /^#compare(?:-(?:ximen|zhongshan|zhonghua|dawan))?$/.test(location.hash);
+  document.getElementById('monthlyReport').hidden = comparison;
+  document.getElementById('comparisonReport').hidden = !comparison;
+  document.getElementById('heroSubtitle').hidden = comparison;
+  document.getElementById('heroPill').hidden = comparison;
+  document.getElementById('comparisonSubtitle').hidden = !comparison;
+  document.getElementById('btnCompare').classList.toggle('active', comparison);
+  document.getElementById('btnCompare').setAttribute('aria-pressed', String(comparison));
+  ['9月','10月','11月'].forEach(month => {
+    const selected = !comparison && month === currentMonth;
+    const button = document.getElementById('btn-' + month);
+    button.classList.toggle('active', selected);
+    button.setAttribute('aria-pressed', String(selected));
+  });
+  const branch = comparison && location.hash !== '#compare' && document.getElementById(location.hash.slice(1));
+  if (branch) branch.scrollIntoView({block:'start'});
+}
+
+function showComparison() {
+  if (location.hash !== '#compare') history.pushState(null, '', '#compare');
+  syncReportView();
+}
+
+renderComparison();
+window.addEventListener('hashchange', syncReportView);
+window.addEventListener('popstate', syncReportView);
+if (location.hash.startsWith('#compare')) {
+  updateKPIs();
+  updateNotice();
+  updateCharts();
+  updateBranchDetails();
+  updateConclusion();
+  syncReportView();
+} else {
+  setMonth('11月');
+}
 </script>
 </body>
 </html>
